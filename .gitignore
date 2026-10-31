@@ -1,0 +1,54 @@
+# Dependencies
+**/node_modules/
+node_modules/
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# WhatsApp Baileys Authentication & Session files
+whatsapp-connector/auth_info/
+auth_info/
+**/auth_info/
+
+# Private generated tokens & credentials
+whatsapp-connector/tokens.json
+tokens.json
+**/tokens.json
+
+# Backend runtime databases & archives
+whatsapp-connector/data/*
+!whatsapp-connector/data/.gitkeep
+data/*
+!data/.gitkeep
+
+# Frontend production build output
+whatsapp-frontend/dist/
+dist/
+**/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+
+**/node_modules/
+.env
+.env.*
+!.env.example
+**/auth_info/
+whatsapp-connector/data/*
+whatsapp-frontend/dist/
+*.log
