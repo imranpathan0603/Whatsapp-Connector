@@ -321,6 +321,13 @@ import makeWASocket, {
     }
   }
 
+  function isRealContact(c) {
+    if (!c?.id) return false;
+    // Exclude group IDs and internal WhatsApp privacy LIDs (anonymous group members)
+    if (c.id.endsWith('@lid') || c.id.endsWith('@g.us') || c.id.endsWith('@broadcast')) return false;
+    return true;
+  }
+
   function getConnectionStatus() {
     const isConnected = Boolean(sock?.user);
     let status = connectionStatus;
@@ -345,8 +352,10 @@ import makeWASocket, {
       totalMessages: messages.length,
       chatCount: messagesByChat.size,
       totalChats: messagesByChat.size,
-      contactCount: contacts.length,
-      contacts: contacts.length,
+      contactCount: contacts.filter(isRealContact).length,
+      contacts: contacts.filter(isRealContact).length,
+      savedContactsCount: contacts.filter(isRealContact).filter(c => Boolean(c.name && c.name.trim())).length,
+      totalRawContacts: contacts.length,
       groupCount: groups.length,
       groups: groups.length,
       lastConnected: lastConnectedAt,
@@ -909,7 +918,14 @@ import makeWASocket, {
   }
   
   function listContacts(q = {}) {
-    let list = contacts;
+    const filterType = String(q.filter || q.type || '').toLowerCase();
+    // Default: only real contacts (excluding @lid and @g.us)
+    let list = contacts.filter(isRealContact);
+    if (filterType === 'saved' || filterType === 'phone' || q.savedOnly === 'true') {
+      list = list.filter(c => Boolean(c.name && c.name.trim()));
+    } else if (filterType === 'unsaved') {
+      list = list.filter(c => !c.name || !c.name.trim());
+    }
     if (q.q) {
       const s = String(q.q).toLowerCase();
       list = list.filter(c =>
@@ -969,7 +985,7 @@ import makeWASocket, {
 
   aiAssistantService.initAiAssistant({
     getMessages: () => messages,
-    getContacts: () => contacts,
+    getContacts: () => contacts.filter(isRealContact),
     getGroups: () => groups,
     getChats: () => buildChats(),
     filterMessages: (q, forcedChatId) => filterMessages(q, forcedChatId),
@@ -1024,7 +1040,7 @@ import makeWASocket, {
     }
   
     if (scope === "all" || scope === "contacts") {
-      for (const c of contacts) {
+      for (const c of contacts.filter(isRealContact)) {
         if (matchAll(`${c.name || ""} ${c.notify || ""} ${c.verifiedName || ""} ${c.id}`)) {
           results.push({
             id: `contact:${c.id}`,
@@ -1234,8 +1250,10 @@ import makeWASocket, {
       chatCount: chats.length,
       groupChats: chats.filter(c => c.type === "group").length,
       individualChats: chats.filter(c => c.type === "individual").length,
-      contacts: contacts.length,
-      contactCount: contacts.length,
+      contacts: contacts.filter(isRealContact).length,
+      contactCount: contacts.filter(isRealContact).length,
+      savedContactsCount: contacts.filter(isRealContact).filter(c => Boolean(c.name && c.name.trim())).length,
+      totalRawContacts: contacts.length,
       groups: groups.length,
       groupCount: groups.length,
       sentCount: stats.sent,

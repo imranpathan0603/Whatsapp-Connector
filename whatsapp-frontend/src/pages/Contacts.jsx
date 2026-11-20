@@ -28,6 +28,7 @@ export function Contacts() {
   const [searchInput, setSearchInput] = useState("");
   const [limit, setLimit] = useState(25);
   const [offset, setOffset] = useState(0);
+  const [filterType, setFilterType] = useState("saved"); // "saved" (phonebook only) | "all_real" | "unsaved"
 
   // Detail Modal
   const [selectedContact, setSelectedContact] = useState(null);
@@ -60,6 +61,7 @@ export function Contacts() {
     try {
       const params = { limit, offset };
       if (query.trim()) params.q = query.trim();
+      if (filterType) params.filter = filterType;
 
       const res = await contactsApi.getContacts(params);
       setContacts(Array.isArray(res.data) ? res.data : []);
@@ -70,7 +72,7 @@ export function Contacts() {
     } finally {
       setLoading(false);
     }
-  }, [limit, offset, query]);
+  }, [limit, offset, query, filterType]);
 
   useEffect(() => {
     fetchContacts();
@@ -114,6 +116,7 @@ export function Contacts() {
       render: (c) => (
         <div className="table-cell-contact-name">
           <strong className="contact-main-name">{c.name || c.notify || c.verifiedName || "Unknown"}</strong>
+          {c.name && <span className="saved-badge" style={{ fontSize: "11px", marginLeft: "6px", color: "#059669", background: "#d1fae5", padding: "1px 6px", borderRadius: "10px", fontWeight: "600" }}>Phonebook</span>}
           {c.verifiedName && <span className="verified-badge">Verified</span>}
         </div>
       ),
@@ -169,11 +172,27 @@ export function Contacts() {
         </form>
 
         <div className="filter-selectors-row">
+          <div className="filter-item">
+            <label>Contact Filter:</label>
+            <select
+              value={filterType}
+              onChange={(e) => {
+                setOffset(0);
+                setFilterType(e.target.value);
+              }}
+            >
+              <option value="saved">📱 Saved Phonebook Contacts</option>
+              <option value="all_real">👥 All Real Contacts (Saved + 1:1)</option>
+              <option value="unsaved">💬 Unsaved Direct Numbers</option>
+            </select>
+          </div>
+
           <button
             className="secondary-button-sm"
             onClick={() => {
               setQuery("");
               setSearchInput("");
+              setFilterType("saved");
               setOffset(0);
             }}
           >
