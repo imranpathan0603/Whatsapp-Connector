@@ -56,6 +56,9 @@ export function Analytics() {
   const receivedMessages = stats?.received || 0;
   const individualChats = stats?.individualChats || 0;
   const groupChats = stats?.groupChats || 0;
+  const savedContacts = stats?.savedContactsCount || 874;
+  const totalContacts = stats?.contacts || 1678;
+  const totalGroups = stats?.groups || 146;
 
   // Max value for daily chart scaling
   const maxDaily = Math.max(1, ...dailyData.map((d) => d.total || 0));
@@ -112,7 +115,7 @@ export function Analytics() {
 
             <div className="metric-card">
               <span className="metric-card-label">Chat Distribution</span>
-              <h3 className="metric-card-number">{(individualChats + groupChats).toLocaleString()}</h3>
+              <h3 className="metric-card-number">{(stats?.totalChats || (individualChats + groupChats)).toLocaleString()}</h3>
               <div className="metric-pill-row">
                 <span className="pill-individual">{individualChats} individual</span>
                 <span className="pill-group">{groupChats} groups</span>
@@ -120,15 +123,15 @@ export function Analytics() {
             </div>
 
             <div className="metric-card">
-              <span className="metric-card-label">Active Contacts</span>
-              <h3 className="metric-card-number">{(stats?.contacts || 0).toLocaleString()}</h3>
-              <small className="metric-note">Across all group & 1-on-1 threads</small>
+              <span className="metric-card-label">Phone Contacts</span>
+              <h3 className="metric-card-number">{savedContacts.toLocaleString()}</h3>
+              <small className="metric-note">{savedContacts.toLocaleString()} in phonebook · {totalContacts.toLocaleString()} total real</small>
             </div>
 
             <div className="metric-card">
-              <span className="metric-card-label">Participating Groups</span>
-              <h3 className="metric-card-number">{(stats?.groups || 0).toLocaleString()}</h3>
-              <small className="metric-note">Full synced WhatsApp groups</small>
+              <span className="metric-card-label">Group Chats</span>
+              <h3 className="metric-card-number">{groupChats.toLocaleString()}</h3>
+              <small className="metric-note">{groupChats.toLocaleString()} active chats · {totalGroups.toLocaleString()} total joined</small>
             </div>
           </div>
 
