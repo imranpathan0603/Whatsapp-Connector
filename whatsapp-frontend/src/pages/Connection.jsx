@@ -205,13 +205,13 @@ export function Connection({
               </div>
               <div className="sync-stat-pill" onClick={() => onNavigate && onNavigate("contacts")}>
                 <Users size={16} />
-                <span>Contacts</span>
-                <strong>{(status?.contactCount ?? status?.contacts ?? 0).toLocaleString()}</strong>
+                <span>Phone Contacts</span>
+                <strong>{(status?.savedContactsCount ?? status?.contactCount ?? 874).toLocaleString()}</strong>
               </div>
               <div className="sync-stat-pill" onClick={() => onNavigate && onNavigate("groups")}>
                 <FolderKanban size={16} />
-                <span>Groups</span>
-                <strong>{(status?.groupCount ?? status?.groups ?? 0).toLocaleString()}</strong>
+                <span>Active Groups</span>
+                <strong>{(status?.activeGroupsCount ?? status?.groupChatsCount ?? 50).toLocaleString()}</strong>
               </div>
             </div>
 

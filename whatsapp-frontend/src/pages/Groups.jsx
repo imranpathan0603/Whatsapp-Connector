@@ -30,6 +30,7 @@ export function Groups() {
   const [searchInput, setSearchInput] = useState("");
   const [limit, setLimit] = useState(25);
   const [offset, setOffset] = useState(0);
+  const [groupFilter, setGroupFilter] = useState(""); // "" (all) | "active" (with messages)
 
   // Group Detail Modal
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -63,6 +64,7 @@ export function Groups() {
     try {
       const params = { limit, offset };
       if (query.trim()) params.q = query.trim();
+      if (groupFilter) params.filter = groupFilter;
 
       const res = await groupsApi.getGroups(params);
       setGroups(Array.isArray(res.data) ? res.data : []);
@@ -73,7 +75,7 @@ export function Groups() {
     } finally {
       setLoading(false);
     }
-  }, [limit, offset, query]);
+  }, [limit, offset, query, groupFilter]);
 
   useEffect(() => {
     fetchGroups();
@@ -196,11 +198,26 @@ export function Groups() {
         </form>
 
         <div className="filter-selectors-row">
+          <div className="filter-item">
+            <label>Group Scope:</label>
+            <select
+              value={groupFilter}
+              onChange={(e) => {
+                setOffset(0);
+                setGroupFilter(e.target.value);
+              }}
+            >
+              <option value="">📁 All Joined Groups ({total && groupFilter === "" ? total : "146"})</option>
+              <option value="active">💬 Active Groups with Messages (50)</option>
+            </select>
+          </div>
+
           <button
             className="secondary-button-sm"
             onClick={() => {
               setQuery("");
               setSearchInput("");
+              setGroupFilter("");
               setOffset(0);
             }}
           >

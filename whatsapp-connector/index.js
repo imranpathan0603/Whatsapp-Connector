@@ -358,6 +358,20 @@ import makeWASocket, {
       totalRawContacts: contacts.length,
       groupCount: groups.length,
       groups: groups.length,
+      activeGroupsCount: (() => {
+        let count = 0;
+        for (const [id] of messagesByChat) {
+          if (id.endsWith("@g.us")) count++;
+        }
+        return count;
+      })(),
+      groupChatsCount: (() => {
+        let count = 0;
+        for (const [id] of messagesByChat) {
+          if (id.endsWith("@g.us")) count++;
+        }
+        return count;
+      })(),
       lastConnected: lastConnectedAt,
       lastDisconnect: lastDisconnectReason
     };
@@ -936,11 +950,15 @@ import makeWASocket, {
   }
   
   function listGroups(q = {}) {
+    const filterType = String(q.filter || q.type || '').toLowerCase();
     let list = groups.map(g => ({
       ...g,
       participantCount: g.participants?.length ?? g.size ?? null,
       messageCount: (messagesByChat.get(g.id) || []).length
     }));
+    if (filterType === 'active') {
+      list = list.filter(g => g.messageCount > 0);
+    }
     if (q.q) {
       const s = String(q.q).toLowerCase();
       list = list.filter(g =>

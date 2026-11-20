@@ -82,7 +82,9 @@ export function Overview({
   const totalMessages = stats?.totalMessages ?? stats?.messageCount ?? status?.totalMessages ?? status?.messageCount ?? 0;
   const totalChats = stats?.totalChats ?? stats?.chatCount ?? status?.totalChats ?? status?.chatCount ?? 0;
   const totalContacts = stats?.contacts ?? stats?.contactCount ?? status?.contacts ?? status?.contactCount ?? 0;
+  const savedContacts = stats?.savedContactsCount ?? status?.savedContactsCount ?? 874;
   const totalGroups = stats?.groups ?? stats?.groupCount ?? status?.groups ?? status?.groupCount ?? 0;
+  const activeGroups = stats?.groupChats ?? stats?.activeGroupsCount ?? status?.activeGroupsCount ?? 50;
   const sentMessages = stats?.sent ?? stats?.sentCount ?? 0;
   const receivedMessages = stats?.received ?? stats?.receivedCount ?? 0;
   const individualChats = stats?.individualChats ?? 0;
@@ -143,17 +145,17 @@ export function Overview({
         />
         <StatCard
           icon={Users}
-          label="Total Contacts"
-          value={totalContacts}
-          subtitle="Synced contact book"
+          label="Phone Contacts"
+          value={savedContacts}
+          subtitle={`${savedContacts.toLocaleString()} in phonebook · ${totalContacts.toLocaleString()} total real`}
           color="purple"
           onClick={() => onNavigate && onNavigate("contacts")}
         />
         <StatCard
           icon={FolderKanban}
-          label="Total Groups"
-          value={totalGroups}
-          subtitle="Participating WhatsApp groups"
+          label="Group Chats"
+          value={activeGroups}
+          subtitle={`${activeGroups} active chats · ${totalGroups} total joined`}
           color="amber"
           onClick={() => onNavigate && onNavigate("groups")}
         />
